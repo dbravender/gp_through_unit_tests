@@ -36,7 +36,7 @@ len('a') == 1
 len([1, 2, 3, 4]) == 4
 max([1, 2, 3, 4]) == 4
 [1, 2, 3, 4].__len__() == 4
-[1, 2, 3].pop() == 4
+[1, 2, 3, 4].pop() == 4
     
 >>> methodfinder([1, 2, 3, 4], 5, [1, 2, 3, 4, 5])
 o = [1, 2, 3, 4]
@@ -45,7 +45,7 @@ o == [1, 2, 3, 4, 5]
 
 >>> methodfinder([1, 2, 3, 4], [5, 6], [1, 2, 3, 4, 5, 6])
 [1, 2, 3, 4].__add__([5, 6]) == [1, 2, 3, 4, 5, 6]
-[1, 2, 3, 4, 5, 6].__iadd__([5, 6]) == [1, 2, 3, 4, 5, 6]
+[1, 2, 3, 4].__iadd__([5, 6]) == [1, 2, 3, 4, 5, 6]
 o = [1, 2, 3, 4]
 o.__iadd__([5, 6])
 o == [1, 2, 3, 4, 5, 6]
@@ -77,6 +77,10 @@ def methodfinder(obj, input=None, expected=None):
     
 def try_func(func, input, expected):
     try:
+        original_self = copy(func.__self__)
+    except:
+        pass
+    try:
         if input:
             result = func(input)
             formatted_input = pformat(input)
@@ -85,7 +89,7 @@ def try_func(func, input, expected):
             formatted_input = ''
         if result == expected:
             if hasattr(func, '__self__') and func.__self__:
-                func_name = '%s.%s' % (pformat(func.__self__), func.__name__)
+                func_name = '%s.%s' % (pformat(original_self), func.__name__)
             else:
                 func_name = func.__name__
             print "%s(%s) == %s" % (func_name, formatted_input, pformat(expected))
