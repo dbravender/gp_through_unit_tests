@@ -68,7 +68,7 @@ builtins = dir(__builtins__)
 [builtins.remove(x) for x in blacklist_builtins if x in builtins]
 
 def methodfinder(obj, input=None, expected=None):
-    if obj and not input:
+    if obj and input is None:
         for func in builtins:
             try_func(eval(func), obj, expected)
     for method in dir(obj):
@@ -79,7 +79,7 @@ def try_method(obj, method, input, expected):
         object_copy = copy(obj)
         bound_method = eval('object_copy.%s' % method)
         try_func(bound_method, input, expected)
-        if input:
+        if input is not None:
             formatted_input = pformat(input)
         else:
             formatted_input = ''
