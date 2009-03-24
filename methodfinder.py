@@ -52,6 +52,12 @@ o == [1, 2, 3, 4, 5, 6]
 o = [1, 2, 3, 4]
 o.extend([5, 6])
 o == [1, 2, 3, 4, 5, 6]
+
+>>> methodfinder([5,4,1,2,3], None, [1,2,3,4,5])
+sorted([5, 4, 1, 2, 3]) == [1, 2, 3, 4, 5]
+o = [5, 4, 1, 2, 3]
+o.sort()
+o == [1, 2, 3, 4, 5]
 '''
 
 from pprint import pformat
@@ -70,8 +76,12 @@ def methodfinder(obj, input=None, expected=None):
         try:
             bound_method = eval('object_copy.%s' % method)
             try_func(bound_method, input, expected)
+            if input:
+                formatted_input = pformat(input)
+            else:
+                formatted_input = ''
             if object_copy == expected: # the horrors of side-effects
-                print "o = %s\no.%s(%s)\no == %s" % (pformat(obj), bound_method.__name__, pformat(input), pformat(expected))
+                print "o = %s\no.%s(%s)\no == %s" % (pformat(obj), bound_method.__name__, formatted_input, pformat(expected))
         except:
             pass
     
