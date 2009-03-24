@@ -72,19 +72,22 @@ def methodfinder(obj, input=None, expected=None):
         for func in builtins:
             try_func(eval(func), obj, expected)
     for method in dir(obj):
+        try_method(obj, method, input, expected)
+
+def try_method(obj, method, input, expected):
+    try:
         object_copy = copy(obj)
-        try:
-            bound_method = eval('object_copy.%s' % method)
-            try_func(bound_method, input, expected)
-            if input:
-                formatted_input = pformat(input)
-            else:
-                formatted_input = ''
-            if object_copy == expected: # the horrors of side-effects
-                print("o = %s\no.%s(%s)\no == %s" % (pformat(obj), bound_method.__name__, formatted_input, pformat(expected)))
-        except:
-            pass
-    
+        bound_method = eval('object_copy.%s' % method)
+        try_func(bound_method, input, expected)
+        if input:
+            formatted_input = pformat(input)
+        else:
+            formatted_input = ''
+        if object_copy == expected: # the horrors of side-effects
+            print("o = %s\no.%s(%s)\no == %s" % (pformat(obj), bound_method.__name__, formatted_input, pformat(expected)))
+    except:
+        pass
+
 def try_func(func, input, expected):
     try:
         original_self = copy(func.__self__)
