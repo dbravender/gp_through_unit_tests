@@ -63,9 +63,9 @@ o == [1, 2, 3, 4, 5]
 from pprint import pformat
 from copy import copy
 
-blacklist_builtins = ['raw_input', 'quit', 'exit', 'eval', 'file', 'apply', 'help', 'license']
+blacklist_builtins = ['raw_input', 'quit', 'exit', 'eval', 'file', 'apply', 'help', 'license', 'print']
 builtins = dir(__builtins__)
-[builtins.remove(x) for x in blacklist_builtins]
+[builtins.remove(x) for x in blacklist_builtins if x in builtins]
 
 def methodfinder(obj, input=None, expected=None):
     if obj and not input:
@@ -81,7 +81,7 @@ def methodfinder(obj, input=None, expected=None):
             else:
                 formatted_input = ''
             if object_copy == expected: # the horrors of side-effects
-                print "o = %s\no.%s(%s)\no == %s" % (pformat(obj), bound_method.__name__, formatted_input, pformat(expected))
+                print("o = %s\no.%s(%s)\no == %s" % (pformat(obj), bound_method.__name__, formatted_input, pformat(expected)))
         except:
             pass
     
@@ -102,7 +102,7 @@ def try_func(func, input, expected):
                 func_name = '%s.%s' % (pformat(original_self), func.__name__)
             else:
                 func_name = func.__name__
-            print "%s(%s) == %s" % (func_name, formatted_input, pformat(expected))
+            print("%s(%s) == %s" % (func_name, formatted_input, pformat(expected)))
     except:
         pass
 
