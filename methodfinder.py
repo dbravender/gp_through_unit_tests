@@ -94,7 +94,7 @@ def try_func(func, input, expected):
     except:
         pass
     try:
-        if input:
+        if input is not None:
             result = func(input)
             formatted_input = pformat(input)
         else:
