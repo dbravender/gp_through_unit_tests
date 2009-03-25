@@ -28,7 +28,7 @@ len('a') == 1
 'a'.isalpha() == 1
 'a'.islower() == 1
 
->>> methodfinder('jon/bob', '/', ['jon', 'bob'])
+>>> methodfinder('jon/bob', ['/'], ['jon', 'bob'])
 'jon/bob'.rsplit('/') == ['jon', 'bob']
 'jon/bob'.split('/') == ['jon', 'bob']
 
@@ -38,12 +38,12 @@ max([1, 2, 3, 4]) == 4
 [1, 2, 3, 4].__len__() == 4
 [1, 2, 3, 4].pop() == 4
     
->>> methodfinder([1, 2, 3, 4], 5, [1, 2, 3, 4, 5])
+>>> methodfinder([1, 2, 3, 4], [5], [1, 2, 3, 4, 5])
 o = [1, 2, 3, 4]
 o.append(5)
 o == [1, 2, 3, 4, 5]
 
->>> methodfinder([1, 2, 3, 4], [5, 6], [1, 2, 3, 4, 5, 6])
+>>> methodfinder([1, 2, 3, 4], [[5, 6]], [1, 2, 3, 4, 5, 6])
 [1, 2, 3, 4].__add__([5, 6]) == [1, 2, 3, 4, 5, 6]
 [1, 2, 3, 4].__iadd__([5, 6]) == [1, 2, 3, 4, 5, 6]
 o = [1, 2, 3, 4]
@@ -58,6 +58,11 @@ sorted([5, 4, 1, 2, 3]) == [1, 2, 3, 4, 5]
 o = [5, 4, 1, 2, 3]
 o.sort()
 o == [1, 2, 3, 4, 5]
+
+>>> methodfinder([], [0, 2], [2])
+o = []
+o.insert(0, 2)
+o == [2]
 '''
 
 from pprint import pformat
@@ -70,7 +75,7 @@ builtins = dir(__builtins__)
 def methodfinder(obj, input=None, expected=None):
     if obj and input is None:
         for func in builtins:
-            try_func(eval(func), obj, expected)
+            try_func(eval(func), [obj], expected)
     for method in dir(obj):
         try_method(obj, method, input, expected)
 
@@ -80,7 +85,7 @@ def try_method(obj, method, input, expected):
         bound_method = eval('object_copy.%s' % method)
         try_func(bound_method, input, expected)
         if input is not None:
-            formatted_input = pformat(input)
+            formatted_input = ', '.join(map(pformat, input))
         else:
             formatted_input = ''
         if object_copy == expected: # the horrors of side-effects
@@ -95,8 +100,8 @@ def try_func(func, input, expected):
         pass
     try:
         if input is not None:
-            result = func(input)
-            formatted_input = pformat(input)
+            result = func(*input)
+            formatted_input = ', '.join(map(pformat, input))
         else:
             result = func()
             formatted_input = ''
