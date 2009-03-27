@@ -82,7 +82,7 @@ def methodfinder(obj, input=None, expected=None):
 def try_method(obj, method, input, expected):
     try:
         object_copy = copy(obj)
-        bound_method = eval('object_copy.%s' % method)
+        bound_method = getattr(object_copy, method)
         try_func(bound_method, input, expected)
         if input is not None:
             formatted_input = ', '.join(map(pformat, input))
