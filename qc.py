@@ -16,6 +16,14 @@ def a_list(item_generator=an_integer, size=(0, 100)):
     return lambda: [evaluate(item_generator) \
                     for _ in xrange(random.randint(size[0], size[1]))]
 
+def a_dict(item_generator=an_integer, value_generator=an_integer, size=(0, 100)):
+    def fun():
+        x = {}
+        for _ in xrange(random.randint(size[0], size[1])):
+            x.update({evaluate(item_generator): evaluate(value_generator)})
+            return x
+    return fun
+
 def a_unicode(size=(0, 100), minunicode=0, maxunicode=255):
     return lambda: u''.join(unichr(random.randint(minunicode, maxunicode)) \
                             for _ in xrange(random.randint(size[0], size[1])))
@@ -81,3 +89,9 @@ def test_reverse_reverse(l):
 @forall(tries=10, c=a_character)
 def test_a_character(c):
     assert len(c) == 1
+
+@forall(tries=10, d=a_dict(item_generator=a_unicode, value_generator=a_list))
+def test_a_dict(d):
+    for x, y in d.iteritems():
+        assert type(x) == unicode
+        assert type(y) == list
