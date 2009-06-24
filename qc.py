@@ -1,5 +1,6 @@
 import random
 import types
+import os
 from functools import partial
 
 __all__ = ['an_integer', 'a_list', 'a_unicode', 'a_character', 'forall']
@@ -21,7 +22,7 @@ def a_dict(item_generator=an_integer, value_generator=an_integer, size=(0, 100))
         x = {}
         for _ in xrange(random.randint(size[0], size[1])):
             x.update({evaluate(item_generator): evaluate(value_generator)})
-            return x
+        return x
     return fun
 
 def a_unicode(size=(0, 100), minunicode=0, maxunicode=255):
@@ -36,7 +37,7 @@ def forall(tries=100, **kwargs):
             for _ in xrange(tries):
                 random_kwargs = (dict((name, evaluate(lazy_value)) \
                                  for (name, lazy_value) in kwargs.iteritems()))
-                if forall.verbose:
+                if forall.verbose or os.environ.has_key('QC_VERBOSE'):
                     from pprint import pprint
                     pprint(random_kwargs)
                 f(**random_kwargs)
@@ -92,6 +93,8 @@ def test_a_character(c):
 
 @forall(tries=10, d=a_dict(item_generator=a_unicode, value_generator=a_list))
 def test_a_dict(d):
+    if d is None:
+        raise Exception('This is bad')
     for x, y in d.iteritems():
         assert type(x) == unicode
         assert type(y) == list
